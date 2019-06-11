@@ -4,6 +4,7 @@ import java.io.*;
 
 public class LogListener {
     KafkaProducerCreator kafkaProducerCreator;
+    public static String directoryName="logserver";
     public static void readFile(File file) throws  Exception {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String log;
@@ -40,27 +41,24 @@ public class LogListener {
 
 
     }
-public static void runReadFolder(String folderPath) throws Exception{
+public static void runReadFolder() throws Exception{
+
         while(true){
-            readFolder(folderPath);
+            readFolder();
         }
 }
 
-public static void readFolder(String folderPath) throws Exception
+public static void readFolder() throws Exception
     {
-        File directory = new File(folderPath);
-        File[] files = directory.listFiles(logFilefilter);
-        //Let's list out the filtered files
-        if(files.length==0){
+        File files=getLogServerDirectory();
+        if(!files.exists()){
             System.out.println("There is no Folder!");
             Thread.sleep(3000);
-            readFolder(folderPath);
+            readFolder();
     }
-            for (File f : files)
-            {
-                System.out.println(f.getName());
-                readFile(f);
-            }
+            System.out.println(files.getName());
+                readFile(files);
+
     }
 
     static FileFilter logFilefilter = new FileFilter() {
@@ -73,6 +71,12 @@ public static void readFolder(String folderPath) throws Exception
             return false;
         }
     };
+    public static File getLogServerDirectory() throws Exception{
+        File directory = new File(System.getProperty("user.dir")+"/"+directoryName);
+        File[] files = directory.listFiles(logFilefilter);
+        return files != null ? files[0] : null;
+    }
+
 }
 
 

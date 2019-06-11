@@ -1,0 +1,43 @@
+!/bin/sh
+log_level=("INFO" "FATAL" "WARN" "ERROR" "DEBUG")
+log_server=("Istanbul" "Tokyo" "Moskow" "Beijing" "London")
+
+#MAXSIZE is 2 MB
+max_filesize=2000000
+directory_name="/home/pinar/IdeaProjects/realTimeProject/logserver/"
+file_name="log_"$(date "+%Y%m%d%H%M%S")
+
+#create a directory
+mkdir -p $directory_name
+#create a file
+touch $directory_name/$file_name
+
+function checkFileSize(){
+    if  (($(wc -c $directory_name/$file_name | awk '{print $1}') > $max_filesize )) 
+    then
+     createNewFile
+    fi
+}
+#function for create a new file 
+function createNewFile(){
+    rm $directory_name/$file_name
+	file_name="log_"$(date "+%Y%m%d%H%M%S")
+	touch $directory_name/$file_name
+
+}
+
+RANDOM=$$$(date +%s)
+while [ 1 ]
+do
+    # Get random expression
+    selectloglevel=${log_level[$RANDOM % ${#log_level[*]}]}
+    selectlogserver=${log_server[$RANDOM % ${#log_server[*]}]}
+
+ echo $(date +'%Y/%m/%d %H:%M:%S') $selectloglevel $selectlogserver "Hello-from-"$selectlogserver >> $directory_name/$file_name
+checkFileSize
+
+sleep .1
+
+done
+
+

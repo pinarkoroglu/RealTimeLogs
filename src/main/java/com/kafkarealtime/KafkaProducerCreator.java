@@ -21,7 +21,11 @@ public class KafkaProducerCreator {
         Producer producer=createProducer();
             ProducerRecord<String, String> record = new ProducerRecord<String, String>(
                     IKafkaConstants.TOPIC_NAME, message);
+        try {
             producer.send(record);
+        }catch (Exception exception){
+            System.out.println(exception);
+        }
              producer.close();
     }
 

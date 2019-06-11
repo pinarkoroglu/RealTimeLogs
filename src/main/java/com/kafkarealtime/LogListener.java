@@ -1,37 +1,23 @@
 package com.kafkarealtime;
+import java.io.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LogListener {
-    /* variables */
-    static public List<String> istanbul = new ArrayList<>();
-    static public  List<String> tokyo = new ArrayList<>();
-    static List<String> beijing = new ArrayList<>();
-    static List<String> moskow = new ArrayList<>();
-    static List<String> london = new ArrayList<>();
-
-    public static void main(String[] args) throws Exception {
-        readFile();
-    }
-
-    public static void readFile() throws Exception{
-        String filePath="/home/pinar/logserver/log_1";
-        File file = new File(filePath);
+    KafkaProducerCreator kafkaProducerCreator;
+    public static void readFile(File file) throws  Exception {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String log;
+
         while (true) {
             log = br.readLine();
 
             if (log == null) {
-                Thread.sleep(1000);
-                log = br.readLine();
-            }
-            String[] logs = log.split("\\r?\\n");
 
+                Thread.sleep(2000);
+                log = br.readLine();
+                break;
+            }
+/*
             for (String line : logs) {
                 String []lines=line.split(" ");
 
@@ -46,8 +32,51 @@ public class LogListener {
                 else if(lines[3].equals("Moskow"))
                     moskow.add(line);
             }
-           // System.out.println(log);
+
+ */
+            KafkaProducerCreator.runProducer(log);
+            System.out.println(log);
         }
 
+
     }
+public static void runReadFolder(String folderPath) throws Exception{
+        while(true){
+            readFolder(folderPath);
+        }
 }
+
+public static void readFolder(String folderPath) throws Exception
+    {
+        File directory = new File(folderPath);
+        File[] files = directory.listFiles(logFilefilter);
+        //Let's list out the filtered files
+        if(files.length==0){
+            System.out.println("There is no Folder!");
+            Thread.sleep(3000);
+            readFolder(folderPath);
+    }
+            for (File f : files)
+            {
+                System.out.println(f.getName());
+                readFile(f);
+            }
+    }
+
+    static FileFilter logFilefilter = new FileFilter() {
+        //Override accept method
+        public boolean accept(File file) {
+            //if the file extension is .log return true, else false
+            if (file.getName().startsWith("log_")) {
+                return true;
+            }
+            return false;
+        }
+    };
+}
+
+
+
+
+
+

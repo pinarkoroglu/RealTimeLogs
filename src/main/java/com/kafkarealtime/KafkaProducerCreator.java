@@ -23,6 +23,7 @@ public class KafkaProducerCreator {
                     IKafkaConstants.TOPIC_NAME, message);
         try {
             producer.send(record);
+            System.out.println(record.value());
         }catch (Exception exception){
             System.out.println(exception);
         }

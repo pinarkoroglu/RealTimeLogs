@@ -1,6 +1,6 @@
 !/bin/sh
 log_level=("INFO" "FATAL" "WARN" "ERROR" "DEBUG")
-log_server=("Istanbul" "Tokyo" "Moskow" "Beijing" "London")
+log_server=("Istanbul" "Tokyo" "Moscow" "Beijing" "London")
 
 #MAXSIZE is 2 MB
 max_filesize=2000000
